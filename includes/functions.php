@@ -70,13 +70,18 @@ function redirect(string $url): void {
 function uploadImage(array $file): string|false {
     $types_autorises = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
+    if ($file['error'] !== UPLOAD_ERR_OK)          return false;
     if (!in_array($file['type'], $types_autorises)) return false;
-    if ($file['size'] > UPLOAD_MAX) return false;
-    if ($file['error'] !== UPLOAD_ERR_OK) return false;
+    if ($file['size'] > UPLOAD_MAX)                 return false;
 
-    $ext      = pathinfo($file['name'], PATHINFO_EXTENSION);
-    $nom      = uniqid('plan_') . '.' . strtolower($ext);
-    $dest     = UPLOAD_DIR . $nom;
+    // Créer le dossier automatiquement s'il n'existe pas (Windows + Linux)
+    if (!is_dir(UPLOAD_DIR)) {
+        if (!mkdir(UPLOAD_DIR, 0755, true)) return false;
+    }
+
+    $ext  = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $nom  = uniqid('plan_') . '.' . $ext;
+    $dest = UPLOAD_DIR . $nom;
 
     if (!move_uploaded_file($file['tmp_name'], $dest)) return false;
     return $nom;
