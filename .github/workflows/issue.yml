@@ -1,12 +1,22 @@
-name: 'Auto Assign'
+name: Auto Assign Issue
+
 on:
-  pull_request:
-    types: [opened, ready_for_review]
+  issues:
+    types: [opened]
 
 jobs:
-  add-reviews:
+  assign-author:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
     steps:
-      - uses: kentaro-m/auto-assign-action@v2.0.1
+      - name: Assign issue to the opener
+        uses: actions/github-script@v7
         with:
-          configuration-path: '.github/some_name_for_configs.yml' # Only needed if you use something other than .github/auto_assign.yml
+          script: |
+            github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              assignees: [context.payload.sender.login]
+            })
