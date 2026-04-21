@@ -1,0 +1,84 @@
+name: Auto Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout du code avec historique + tags
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2. Récupérer le dernier tag
+      - name: Get last tag
+        id: get_last_tag
+        run: |
+          last_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "last_tag=$last_tag" >> $GITHUB_OUTPUT
+          echo "Last tag found: $last_tag"
+
+      # 3. Calculer la nouvelle version (patch +1 avec passage aux dizaines/centaines)
+      - name: Determine next version
+        id: bump_version
+        run: |
+          last_tag="${{ steps.get_last_tag.outputs.last_tag }}"
+          if [ -z "$last_tag" ]; then
+            new_version="v0.1.0"
+          else
+            major=$(echo $last_tag | cut -d. -f1 | sed 's/v//')
+            minor=$(echo $last_tag | cut -d. -f2)
+            patch=$(echo $last_tag | cut -d. -f3)
+
+            # Incrément du patch
+            patch=$((patch+1))
+
+            # Si patch atteint 10 -> reset patch et +1 minor
+            if [ $patch -ge 10 ]; then
+              patch=0
+              minor=$((minor+1))
+            fi
+
+            # Si minor atteint 10 -> reset minor et +1 major
+            if [ $minor -ge 10 ]; then
+              minor=0
+              major=$((major+1))
+            fi
+
+            new_version="v$major.$minor.$patch"
+          fi
+
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+          echo "Next release tag: $new_version"
+
+      # 4. Créer et pousser le nouveau tag
+      - name: Create and push new tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.bump_version.outputs.new_version }}
+          git push origin ${{ steps.bump_version.outputs.new_version }}
+
+      # 5. Créer la release GitHub
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.bump_version.outputs.new_version }}
+          name: 🚀 Release ${{ steps.bump_version.outputs.new_version }}
+          body: |
+            🚀 Release automatique ${{ steps.bump_version.outputs.new_version }}
+
+            Cette release a été générée automatiquement suite à un push sur la branche main.
+
+            🔄 La mise à jour devrait être appliquée automatiquement. Si ce n'est pas le cas, contactez le développeur.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
