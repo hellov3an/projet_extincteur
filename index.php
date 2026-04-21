@@ -56,7 +56,7 @@ include 'views/header.php';
     <p><?= $stats['total'] ?> appareil(s) · <?= $stats['zones'] ?> zone(s)</p>
   </div>
   <div class="page-header-actions">
-    <?php if (peutFaire('extincteurs.modifier')): ?>
+    <?php if (!estLecteur() && peutFaire('extincteurs.modifier')): ?>
     <a href="extincteur_form.php" class="btn btn-primary">+ Ajouter un extincteur</a>
     <?php endif; ?>
   </div>
@@ -118,7 +118,7 @@ include 'views/header.php';
 <div class="empty-state">
   <div class="ei">🔍</div>
   <p>Aucun extincteur trouvé<?= $search ? ' pour « ' . e($search) . ' »' : '' ?>.</p>
-  <?php if (!$search && !$type && !$zone && peutFaire('extincteurs.modifier')): ?>
+  <?php if (!$search && !$type && !$zone && !estLecteur() && peutFaire('extincteurs.modifier')): ?>
   <a href="extincteur_form.php" class="btn btn-primary">Ajouter le premier extincteur</a>
   <?php endif; ?>
 </div>
@@ -154,10 +154,10 @@ include 'views/header.php';
       <td>
         <div class="td-actions">
           <a href="extincteur_voir.php?id=<?= $ext['id'] ?>" class="btn btn-sm">Voir</a>
-          <?php if (peutFaire('extincteurs.modifier')): ?>
+          <?php if (!estLecteur() && peutFaire('extincteurs.modifier')): ?>
           <a href="extincteur_form.php?id=<?= $ext['id'] ?>" class="btn btn-sm btn-ghost">Modifier</a>
           <?php endif; ?>
-          <?php if (peutFaire('extincteurs.supprimer')): ?>
+          <?php if (!estLecteur() && peutFaire('extincteurs.supprimer')): ?>
           <a href="extincteur_suppr.php?id=<?= $ext['id'] ?>"
              class="btn btn-sm btn-danger"
              onclick="return confirm('Supprimer cet extincteur ?')">Suppr.</a>

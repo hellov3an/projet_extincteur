@@ -32,10 +32,10 @@ include 'views/header.php';
     <p><?= e($ext['type']) ?> · <?= e($ext['zone']) ?></p>
   </div>
   <div class="page-header-actions">
-    <?php if (peutFaire('extincteurs.modifier')): ?>
+    <?php if (!estLecteur() && peutFaire('extincteurs.modifier')): ?>
     <a href="extincteur_form.php?id=<?= $ext['id'] ?>" class="btn btn-primary">✏️ Modifier</a>
     <?php endif; ?>
-    <?php if (peutFaire('extincteurs.supprimer')): ?>
+    <?php if (!estLecteur() && peutFaire('extincteurs.supprimer')): ?>
     <a href="extincteur_suppr.php?id=<?= $ext['id'] ?>"
        class="btn btn-danger"
        onclick="return confirm('Supprimer cet extincteur ?')">Supprimer</a>

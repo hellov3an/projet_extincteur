@@ -7,6 +7,7 @@ require_once 'includes/auth.php';
 requireAdmin();
 
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -105,3 +106,5 @@ requireAdmin();
 </div>
 </body>
 </html>
+
+<?php include 'views/footer.php'; ?>
