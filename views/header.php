@@ -34,6 +34,12 @@
       <span>⚙️</span> Admin
     </a>
     <?php endif; ?>
+    <?php if (currentUser()['role'] === 'admin'): ?>
+    <a href="<?= BASE_URL ?>/view_logs.php"
+       class="<?= in_array($p, ['view_logs.php']) ? 'active' : '' ?>">
+      <span>⚙️</span> Logs
+    </a>
+    <?php endif; ?>
   </div>
 
   <div class="navbar-user">

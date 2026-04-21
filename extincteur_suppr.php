@@ -5,7 +5,16 @@ require_once 'includes/auth.php';
 require_once 'includes/functions.php';
 
 requireLogin();
+
+// Bloque les lecteurs (plus sécurisé qu'une simple permission)
+if (estLecteur()) {
+    writeLog('acces_refuse', currentUser()['email'], 'Tentative de suppression d\'extincteur avec rôle lecteur');
+    flash('erreur', "Les lecteurs ne peuvent pas supprimer les extincteurs.");
+    redirect(BASE_URL . '/index.php');
+}
+
 if (!peutFaire('extincteurs.supprimer')) {
+    writeLog('acces_refuse', currentUser()['email'], 'Permission refusée pour suppression extincteur');
     flash('erreur', "Permission refusée.");
     redirect(BASE_URL . '/index.php');
 }

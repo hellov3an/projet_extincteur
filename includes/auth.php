@@ -42,19 +42,43 @@ function peutFaire(string $permission): bool {
     return in_array($permission, $permissions);
 }
 
+// Vérifie si l'utilisateur ne peut pas modifier (lecteur ou sans permission)
+function estLecteur(): bool {
+    $user = currentUser();
+    if (!$user) return true;
+    return $user['role'] === 'lecteur';
+}
+
 // Connecte un utilisateur (vérifie email + mot de passe)
 function connecter(string $email, string $motdepasse): bool {
+    require_once __DIR__ . '/functions.php';
+    
     $db = getDB();
     $stmt = $db->prepare('SELECT * FROM utilisateurs WHERE email = ? AND actif = 1');
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
     if ($user && password_verify($motdepasse, $user['mot_de_passe'])) {
-        // On ne stocke pas le mot de passe en session
+        // Connexion réussie
         unset($user['mot_de_passe']);
         $_SESSION['user'] = $user;
+        
+        // Enregistre la connexion réussie
+        writeLog('connexion_succes', $email, 'Connexion réussie', [
+            'user_id' => $user['id'] ?? null,
+            'role'    => $user['role'] ?? null,
+        ]);
+        
         return true;
     }
+    
+    // Tentative échouée - enregistre l'erreur
+    if (!$user) {
+        writeLog('connexion_echec', $email, 'Email non trouvé (utilisateur inactif ou n\'existe pas)');
+    } else {
+        writeLog('connexion_echec', $email, 'Mot de passe incorrect');
+    }
+    
     return false;
 }
 

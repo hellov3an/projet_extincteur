@@ -9,12 +9,34 @@ if (currentUser()) redirect(BASE_URL . '/index.php');
 $erreur = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
-    $mdp   = $_POST['mot_de_passe'] ?? '';
-    if (connecter($email, $mdp)) {
-        redirect(BASE_URL . '/index.php');
-    } else {
-        $erreur = 'Email ou mot de passe incorrect.';
+    try {
+        $email = trim($_POST['email'] ?? '');
+        $mdp   = $_POST['mot_de_passe'] ?? '';
+        
+        // Validations de base
+        if (empty($email)) {
+            $erreur = 'Veuillez entrer votre email.';
+            writeLog('validation_erreur', 'EMPTY', 'Email vide soumis');
+        } elseif (empty($mdp)) {
+            $erreur = 'Veuillez entrer votre mot de passe.';
+            writeLog('validation_erreur', $email, 'Mot de passe vide soumis');
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $erreur = 'Format d\'email invalide.';
+            writeLog('validation_erreur', $email, 'Format d\'email invalide');
+        } else {
+            // Essaie de connecter
+            if (connecter($email, $mdp)) {
+                redirect(BASE_URL . '/index.php');
+            } else {
+                $erreur = 'Email ou mot de passe incorrect.';
+            }
+        }
+    } catch (PDOException $e) {
+        writeLog('erreur_bd', $_POST['email'] ?? 'UNKNOWN', 'Erreur Base de Données: ' . $e->getMessage());
+        $erreur = 'Erreur système. Veuillez réessayer plus tard.';
+    } catch (Exception $e) {
+        writeLog('erreur_system', $_POST['email'] ?? 'UNKNOWN', 'Erreur: ' . $e->getMessage());
+        $erreur = 'Erreur système. Veuillez réessayer plus tard.';
     }
 }
 ?>

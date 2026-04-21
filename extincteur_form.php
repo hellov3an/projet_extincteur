@@ -5,8 +5,18 @@ require_once 'includes/auth.php';
 require_once 'includes/functions.php';
 
 requireLogin();
+
+// Bloque les lecteurs (plus sécurisé qu'une simple permission)
+if (estLecteur()) {
+    writeLog('acces_refuse', currentUser()['email'], 'Tentative de modification d\'extincteur avec rôle lecteur');
+    flash('erreur', "Les lecteurs ne peuvent pas modifier les extincteurs."); 
+    redirect(BASE_URL . '/index.php');
+}
+
 if (!peutFaire('extincteurs.modifier')) {
-    flash('erreur', "Permission refusée."); redirect(BASE_URL . '/index.php');
+    writeLog('acces_refuse', currentUser()['email'], 'Permission refusée pour modification extincteur');
+    flash('erreur', "Permission refusée."); 
+    redirect(BASE_URL . '/index.php');
 }
 
 $db      = getDB();

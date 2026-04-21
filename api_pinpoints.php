@@ -24,6 +24,10 @@ $db = getDB();
 
 // ── Ajouter un pinpoint ──────────────────────────────────────
 if ($action === 'ajouter') {
+    if (estLecteur()) {
+        echo json_encode(['ok' => false, 'erreur' => 'Les lecteurs ne peuvent pas modifier les marqueurs.']);
+        exit;
+    }
     if (!peutFaire('extincteurs.modifier')) {
         echo json_encode(['ok' => false, 'erreur' => 'Permission refusée.']);
         exit;
@@ -76,6 +80,10 @@ if ($action === 'ajouter') {
 
 // ── Supprimer un pinpoint ────────────────────────────────────
 if ($action === 'supprimer') {
+    if (estLecteur()) {
+        echo json_encode(['ok' => false, 'erreur' => 'Les lecteurs ne peuvent pas modifier les marqueurs.']);
+        exit;
+    }
     if (!peutFaire('extincteurs.modifier')) {
         echo json_encode(['ok' => false, 'erreur' => 'Permission refusée.']);
         exit;

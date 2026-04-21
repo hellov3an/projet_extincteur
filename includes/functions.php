@@ -86,3 +86,39 @@ function uploadImage(array $file): string|false {
     if (!move_uploaded_file($file['tmp_name'], $dest)) return false;
     return $nom;
 }
+
+// Enregistre un log de connexion
+function writeLog(string $type, string $email, string $message, ?array $extra = null): void {
+    $logs_dir = __DIR__ . '/../logs';
+    
+    // Crée le dossier logs s'il n'existe pas
+    if (!is_dir($logs_dir)) {
+        mkdir($logs_dir, 0755, true);
+    }
+    
+    // Nomme le fichier log par date (format: YYYY-MM-DD.log)
+    $log_file = $logs_dir . '/' . date('Y-m-d') . '.log';
+    
+    // Construit le message de log
+    $timestamp = date('Y-m-d H:i:s');
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
+    $user_agent = substr($_SERVER['HTTP_USER_AGENT'] ?? 'UNKNOWN', 0, 100);
+    
+    $log_data = [
+        'timestamp'  => $timestamp,
+        'type'       => $type,
+        'email'      => $email,
+        'ip'         => $ip,
+        'user_agent' => $user_agent,
+        'message'    => $message,
+    ];
+    
+    // Ajoute les données supplémentaires si fournies
+    if ($extra) {
+        $log_data = array_merge($log_data, $extra);
+    }
+    
+    // Convertit en JSON et ajoute au fichier
+    $log_line = json_encode($log_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
+    file_put_contents($log_file, $log_line, FILE_APPEND | LOCK_EX);
+}
