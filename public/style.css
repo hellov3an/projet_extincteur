@@ -655,3 +655,15 @@ tbody tr:hover td { background: #f9fafb; }
   thead th, tbody td { padding: 9px 10px; }
   table { font-size: .82rem; }
 }
+
+/* ── Log table styles ─────────────────────────────────────────── */
+tr.log-success { background-color: rgba(16, 185, 129, 0.05); }
+tr.log-error   { background-color: rgba(239, 68, 68, 0.05); }
+tr.log-warning { background-color: rgba(245, 158, 11, 0.05); }
+tr.log-info    { background-color: rgba(59, 130, 246, 0.05); }
+
+.badge {
+  display: inline-block; padding: 4px 10px; border-radius: 12px;
+  font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
