@@ -122,3 +122,40 @@ function writeLog(string $type, string $email, string $message, ?array $extra = 
     $log_line = json_encode($log_data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n";
     file_put_contents($log_file, $log_line, FILE_APPEND | LOCK_EX);
 }
+
+// ============================================================
+//  Gestion des révisions d'extincteurs
+// ============================================================
+
+// Retourne le libellé du type de maintenance
+function typeMaintenanceLabel(string $type): string {
+    return match($type) {
+        'Visite périodique' => 'Visite périodique',
+        'Entretien'         => 'Entretien',
+        'Recharge'          => 'Recharge',
+        'Remplacement'      => 'Remplacement',
+        'Réparation'        => 'Réparation',
+        'Autre'             => 'Autre',
+        default             => $type,
+    };
+}
+
+// Retourne le libellé de la conformité
+function conformiteLabel(string $conformite): string {
+    return match($conformite) {
+        'Conforme'      => 'Conforme ✓',
+        'Non conforme'  => 'Non conforme ✗',
+        'À vérifier'    => 'À vérifier ⚠',
+        default         => $conformite,
+    };
+}
+
+// Retourne la classe CSS de la conformité
+function conformiteClass(string $conformite): string {
+    return match($conformite) {
+        'Conforme'      => 'conformite-ok',
+        'Non conforme'  => 'conformite-ko',
+        'À vérifier'    => 'conformite-warn',
+        default         => '',
+    };
+}

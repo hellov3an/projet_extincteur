@@ -6,7 +6,7 @@
   <title><?= e($titre ?? 'GestionFeu') ?> — GestionFeu</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="<?= BASE_URL ?>/public/style.css">
+  <link rel="stylesheet" href="/public/style.css">
 </head>
 <body>
 
