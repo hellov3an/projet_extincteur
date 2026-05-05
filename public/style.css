@@ -279,6 +279,35 @@ tbody tr:hover td { background: #f9fafb; }
 .badge-type { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-bd); }
 .badge-type::before { display:none; }
 
+.link-primary {
+  color: var(--red);
+  text-decoration: none;
+}
+.link-primary:hover {
+  text-decoration: underline;
+}
+
+.conformite-ok {
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid var(--green-bd);
+}
+.conformite-ok::before { background: var(--green); }
+
+.conformite-warn {
+  background: var(--amber-bg);
+  color: var(--amber);
+  border: 1px solid var(--amber-bd);
+}
+.conformite-warn::before { background: var(--amber); }
+
+.conformite-ko {
+  background: var(--red-light);
+  color: var(--red);
+  border: 1px solid var(--red-border);
+}
+.conformite-ko::before { background: var(--red); }
+
 .badge-admin      { background:#fdf4ff; color:#9333ea; border:1px solid #e9d5ff; }
 .badge-technicien { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-bd); }
 .badge-lecteur    { background:var(--surface2); color:var(--text-2); border:1px solid var(--border); }

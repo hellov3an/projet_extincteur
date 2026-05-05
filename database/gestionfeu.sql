@@ -68,6 +68,28 @@ CREATE TABLE pinpoints (
   FOREIGN KEY (extincteur_id) REFERENCES extincteurs(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ── Révisions d'extincteurs ──────────────────────────────────
+
+CREATE TABLE revisions_extincteurs (
+  id                INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  extincteur_id     INT UNSIGNED NOT NULL,
+  date_revision     DATE         NOT NULL COMMENT 'Date de l\'intervention',
+  type_maintenance  ENUM('Visite périodique','Entretien','Recharge','Remplacement','Réparation','Autre') NOT NULL DEFAULT 'Visite périodique',
+  entreprise        VARCHAR(255) NULL COMMENT 'Nom de l\'entreprise/technicien',
+  contact           VARCHAR(100) NULL COMMENT 'Personne de contact',
+  observations      TEXT         NULL COMMENT 'Notes sur l\'intervention',
+  conformite        ENUM('Conforme','Non conforme','À vérifier') NOT NULL DEFAULT 'Conforme',
+  prochaine_date    DATE         NULL COMMENT 'Date de la prochaine révision recommandée',
+  utilisateur_id    INT UNSIGNED NOT NULL COMMENT 'Technicien qui a enregistré la révision',
+  created_at        TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+  updated_at        TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (extincteur_id)  REFERENCES extincteurs(id)       ON DELETE CASCADE,
+  FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id)      ON DELETE RESTRICT,
+  INDEX idx_extincteur (extincteur_id),
+  INDEX idx_date (date_revision DESC),
+  INDEX idx_conformite (conformite)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- ============================================================
 --  Données de démonstration
@@ -114,3 +136,13 @@ INSERT INTO extincteurs (numero_serie, type, marque, capacite, zone, localisatio
 ('EXT-MUSCU-001','CO2',   'Anaf',   5.0, 'Muscu/BTS',        'Salle muscu, mur Est',             '2022-04-18', '2027-04-18', '2024-04-18', '2025-04-18', NULL),
 ('EXT-PSCI-001','Poudre', 'Eurofeu',6.0, 'Plateau Sciences', 'Labo chimie, près de la hotte',   '2021-09-01', '2026-09-01', '2024-09-01', '2025-09-01', 'Vérifier accessibilité mensuelle'),
 ('EXT-PSECU-001','CO2',   'Sicli',  5.0, 'Plateau Sécu',     'Couloir principal plateau sécu',   '2023-01-15', '2028-01-15', '2024-01-15', '2025-01-15', NULL);
+
+-- Données de démonstration pour les révisions
+INSERT INTO revisions_extincteurs (extincteur_id, date_revision, type_maintenance, entreprise, contact, observations, conformite, prochaine_date, utilisateur_id) VALUES
+(1, '2024-06-15', 'Visite périodique', 'SecuRéve SA', 'Jean Martin', 'Visite annuelle effectuée. Extincteur en bon état, pression correcte.', 'Conforme', '2025-06-15', 2),
+(1, '2023-06-14', 'Visite périodique', 'SecuRéve SA', 'Pierre Durand', 'Contrôle positif. État satisfaisant.', 'Conforme', '2024-06-14', 2),
+(2, '2024-09-01', 'Entretien', 'Sécurité Plus', 'Marie Blanc', 'Entretien complet. Pression rechargée à 9 bars. Joint d\'étanchéité remplacé.', 'Conforme', '2025-09-01', 2),
+(3, '2024-01-10', 'Visite périodique', 'SecuRéve SA', 'Jean Martin', 'Visite satisfaisante. Poudre compactée légèrement, brassage recommandé.', 'À vérifier', '2025-01-10', 2),
+(4, '2024-03-20', 'Remplacement', 'ProTech Sécurité', 'Luc Noir', 'Extincteur remplacé suite à date d\'expiration dépassée (ancien : EXT-ETG1-002).', 'Conforme', '2025-03-20', 2),
+(5, '2024-09-05', 'Visite périodique', 'Sécurité Plus', 'Marie Blanc', 'Visite périodique annuelle. Tout est conforme.', 'Conforme', '2025-09-05', 2);
+
