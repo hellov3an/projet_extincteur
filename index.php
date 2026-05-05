@@ -56,7 +56,6 @@ include 'views/header.php';
     <p><?= $stats['total'] ?> appareil(s) · <?= $stats['zones'] ?> zone(s)</p>
   </div>
   <div class="page-header-actions">
-    <a href="revisions.php" class="btn btn-ghost">📊 Révisions</a>
     <?php if (!estLecteur() && peutFaire('extincteurs.modifier')): ?>
     <a href="extincteur_form.php" class="btn btn-primary">+ Ajouter un extincteur</a>
     <?php endif; ?>
