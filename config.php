@@ -7,7 +7,7 @@
 define('DB_HOST',    '127.0.0.1');
 define('DB_NAME',    'gestionfeu');
 define('DB_USER',    'root');
-define('DB_PASS',    '');
+define('DB_PASS',    'Sleepaii06');
 define('DB_CHARSET', 'utf8mb4');
 
 // Uploads — DIRECTORY_SEPARATOR assure la compatibilité Windows et Linux
@@ -17,4 +17,4 @@ define('UPLOAD_MAX', 10 * 1024 * 1024); // 10 Mo
 
 // App
 define('APP_NAME', 'GestionFeu');
-define('BASE_URL',  '/gestionfeu');  // Adapter si le dossier s'appelle différemment
+define('BASE_URL',  'http://192.168.2.201');  // Adapter si le dossier s'appelle différemment
